@@ -23,6 +23,9 @@ use tower_http::ServiceBuilderExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tokio_rustls::rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .unwrap();
     let data_dir = std::path::PathBuf::from_iter([std::env!("CARGO_MANIFEST_DIR"), "data"]);
     let certs = {
         let fd = std::fs::File::open(data_dir.join("tls/server.pem"))?;
@@ -46,7 +49,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let http = Builder::new(TokioExecutor::new());
 
-    let listener = TcpListener::bind("[::1]:50051").await?;
+    let listener = TcpListener::bind("127.0.0.1:50051").await?;
     let tls_acceptor = TlsAcceptor::from(Arc::new(tls));
 
     loop {
