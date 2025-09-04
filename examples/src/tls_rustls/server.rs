@@ -23,6 +23,9 @@ use tower_http::ServiceBuilderExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tokio_rustls::rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .unwrap();
     let data_dir = std::path::PathBuf::from_iter([std::env!("CARGO_MANIFEST_DIR"), "data"]);
     let certs = {
         let fd = std::fs::File::open(data_dir.join("tls/server.pem"))?;
